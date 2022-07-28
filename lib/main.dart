@@ -1,25 +1,40 @@
-// ignore_for_file: prefer_const_constructors, dead_code
+// ignore_for_file: prefer_const_constructors, dead_code, prefer_typing_uninitialized_variables
 
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:prac/screens/home.dart';
 import 'package:prac/screens/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+void main() async {
+  //background services etc.
+  WidgetsFlutterBinding();
+  //var for SharedPreferences.getInstance()
+  final prefs = SharedPreferences.getInstance();
+  //var for await prefs
+  final SharedPreferences _bbpref = await prefs;
+  //var for saved token via login.
+  var gettoken = _bbpref.getString('new');
+
   HttpOverrides.global = MyHttpOverrides();
-  runApp(MyApp());
+  runApp(MyApp(
+    //constructor for getting token status
+    tkn: gettoken.toString(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
+  //var for token status
+  final tkn;
+  //constructor to use for the status of token
+  const MyApp({Key? key, required this.tkn}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LogIn(),
+      // home: Register(),
+      home: tkn.toString() == null ? LogIn() : HomeScreen(),
     );
   }
 }
